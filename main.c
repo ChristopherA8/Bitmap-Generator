@@ -1,0 +1,54 @@
+#include <stdio.h>
+
+int main() {
+
+  unsigned char fileSize[4] = {0x0};
+
+  unsigned char data[83] = {
+    // Bitmap file header
+    0x42, 0x4D, // "BM"
+    fileSize[0], 0x00, 0x00, 0x00, // File Size
+    0x00, 0x00, // Unused
+    0x00, 0x00, // Unused
+    0x36, 0x00, 0x00, 0x00, // Offset of pixel data
+
+    // DIB Header
+    0x28, 0x00, 0x00, 0x00, // Size of DIB header (bytes)
+    0x01, 0x00, 0x00, 0x00, // Width of bitmap (pixels)
+    0x03, 0x00, 0x00, 0x00, // Height of bitmap (pixels)
+    0x01, 0x00, // # of color planes
+    0x18, 0x00, // # of bits per pixel
+    0x00, 0x00, 0x00, 0x00, // 0 for no compression
+    0x0C, 0x00, 0x00, 0x00, // Size of raw bitmap including padding
+    0x13, 0x0B, 0x00, 0x00, // 2835 pixels/meter horizontal
+    0x13, 0x0B, 0x00, 0x00, // 2835 pixels/meter vertical
+    0x00, 0x00, 0x00, 0x00, // # of colors in pallete
+    0x00, 0x00, 0x00, 0x00, // # of important colors (0 = all)
+
+    // Pixel Array
+    0x00, 0xFF, 0x00, 0x00, // Green Pixel + Padding
+    0x00, 0x00, 0xFF, 0x00, // Red Pixel + Padding
+    0xFF, 0xFF, 0xFF, 0x00 // White Pixel + Padding
+  };
+
+  fileSize[0] = sizeof(data)/sizeof(data[0]);
+
+  FILE *write_ptr;
+  write_ptr = fopen("image.bmp","wb");
+  fwrite(data, sizeof(data), 1, write_ptr);
+  fclose(write_ptr);
+
+  return 0;
+}
+
+
+// 2x2 pixel array
+/*
+  // Pixel Array
+  0x00, 0x00, 0xFF, // Red Pixel
+  0xFF, 0xFF, 0xFF, // White Pixel
+  0x00, 0x00, // Padding for 4-byte alignment (could be a non-zero value)
+  0xFF, 0x00, 0x00, // Blue Pixel
+  0x00, 0xFF, 0x00, // Green Pixel
+  0x00, 0x00 // Padding
+*/
